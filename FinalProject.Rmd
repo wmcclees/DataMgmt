@@ -94,24 +94,14 @@ p2<-ggplot(divdata,aes(PlateLoc,Diversity))
 p2+geom_boxplot()+theme_bw()+labs(x="Plate Location", y="Shannon Diversity Index/Plate")
 ```
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 6. Species richness by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
-p3<-ggplot(divdata,aes(PlateTrt,count))
-p3+geom_boxplot()+theme_bw()+labs(x="Plate Treatment", y="Species Richness/Plate")
-```
-
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 7. Species diversity (Shannon index) by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
-p4<-ggplot(divdata,aes(PlateTrt,Diversity))
-p4+geom_boxplot()+theme_bw()+labs(x="Plate Treatment", y="Shannon Diversity Index/Plate")
-```
-
 ```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 8. Species richness per plate across distances broken down by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
 p5<-ggplot(data=divdata,aes(x=Dist,y=count))+geom_boxplot(aes(group=Dist))
-p5+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(axis.text.y=element_text(size=14),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=14),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=14),strip.text.y=element_text(size=14))
+p5+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(plot.title=element_text(size=10),axis.text.y=element_text(size=10),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=10),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
 ```
 
 ```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 9. Species diversity (Shannon index) per plate across distances broken down by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
 p6<-ggplot(data=divdata,aes(x=Dist,y=Diversity))+geom_boxplot(aes(group=Dist))
-p6+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(axis.text.y=element_text(size=14),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=14),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=14),strip.text.y=element_text(size=14))
+p6+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(plot.title=element_text(size=10), axis.text.y=element_text(size=10),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=10),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
 ```
 
 ```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 10. Species richness per plate across distances broken down by plate treatment (floating or fixed) and invasion status.", fig.height=6, fig.width=6}
