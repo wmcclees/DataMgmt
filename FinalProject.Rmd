@@ -1,6 +1,7 @@
 ---
 title: "Exploring the Fouling Community Along a Distance Gradient from Artificial Structures"
 output: html_document
+fig_caption: yes
 ---
 
 
@@ -37,10 +38,10 @@ Aquatic communities become far more susceptible to introduced species if they ar
 
 **Materials and Methods**
 
-Community assemblages of sessile marine invertebrates were studied in August-October 2015 in Yaquina Bay in Newport, Oregon (Figure 1). This community was ideal for this experiment given the rapid community development and the high occurrence of both native and non-native species in marinas. Ceramic settling panels (SIZE: measure plate) were deployed throughout the Embarcadero Marina as well as along a gradient of distance beyond the marina (Figure 2). Ceramic settling panels as opposed to PVC settling panels were used to more closely mimic the nearby natural substrate. Additionally, using settling panels provides a standard area to be able to compare the community across distances. The Embarcadero Marina is located adjacent to the international shipping terminal, and the shoreline between the marina and the shipping terminal is reinforced with riprap. The panels were arranged so there was one panel floating horizontally one meter below the surface at all times and one panel attached to the cinderblock on the benthos (Figure 3). Apparatuses were deployed randomly throughout the marina, attached to floating docks. They were also deployed approximately every 100 meters beyond the opening of the marina (Figure 2). Environmental data was collected at deployment for both inside and outside the marina, including water temperature, salinity, clarity, and dissolved oxygen. The apparatuses were left in the water for 10 weeks to allow species to colonize the plates. When the plates were retrieved, environmental data was collected once again for both inside and outside the marina. Each plate was isolated in a container in the lab with water continuously flowing over them. For each plate, point counts were taken (a 7x7 grid with 1 random point to make up 50 points) and all species were identified and vouchered. Species diversity (Shannon index) and species richness were calculated for each plate. Data analysis was performed in RStudio Version 0.99.891.
+Community assemblages of sessile marine invertebrates were studied in August-October 2015 in Yaquina Bay in Newport, Oregon (Figure 1). This community was ideal for this experiment given the rapid community development and the high occurrence of both native and non-native species in marinas. Ceramic settling panels (6" x 6") were deployed throughout the Embarcadero Marina as well as along a gradient of distance beyond the marina (Figure 2). Ceramic settling panels as opposed to PVC settling panels were used to more closely mimic the nearby natural substrate. Additionally, using settling panels provides a standard area to be able to compare the community across distances. The Embarcadero Marina is located adjacent to the international shipping terminal, and the shoreline between the marina and the shipping terminal is reinforced with riprap. The panels were arranged so there was one panel floating horizontally one meter below the surface at all times and one panel attached to the cinderblock on the benthos (Figure 3). Apparatuses were deployed randomly throughout the marina, attached to floating docks. They were also deployed approximately every 100 meters beyond the opening of the marina (Figure 2). Environmental data was collected at deployment for both inside and outside the marina, including water temperature, salinity, clarity, and dissolved oxygen. The apparatuses were left in the water for 10 weeks to allow species to colonize the plates. When the plates were retrieved, environmental data was collected once again for both inside and outside the marina. Each plate was isolated in a container in the lab with water continuously flowing over them. For each plate, point counts were taken (a 7x7 grid with 1 random point to make up 50 points) and all species were identified and vouchered. Species diversity (Shannon index) and species richness were calculated for each plate. Data analysis was performed in RStudio Version 0.99.891.
 
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 1. Study site location in Yaquina Bay, Oregon.", fig.height=6, fig.width=6}
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 1. Study site location in Yaquina Bay, Oregon.", fig.height=4, fig.width=4}
 platelocmap<-plateloc[,-2:-4]
 platelocmap<-platelocmap[,-4]
 newport_lat<- 44.629484
@@ -48,15 +49,16 @@ newport_long<- -124.040865
 YB<-get_map("Newport, OR", maptype="satellite", zoom=12)
 ggmap(YB)+geom_point(aes(x=newport_long, y=newport_lat, fill="red", alpha=0.8), size=5, shape=21)+guides(fill=FALSE, alpha=FALSE, size=FALSE)+theme(axis.title.x=element_blank(), axis.title.y=element_blank())
 ```
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 2. Plate locations in and outside of the Embarcadero Marina in Yaquina Bay, Oregon.", fig.height=6, fig.width=6}
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 2. Plate locations in and outside of the Embarcadero Marina in Yaquina Bay, Oregon.", fig.height=4, fig.width=4}
 mapnewport<- get_map(location=c(lon=newport_long, lat=newport_lat),zoom=16, maptype="satellite", scale=2)
 ggmap(mapnewport)+geom_point(data=plateloc, aes(x=Long, y=Lat, fill="red", alpha=0.8), size=5, shape=21)+guides(fill=FALSE, alpha=FALSE, size=FALSE)+theme(axis.title.x=element_blank(), axis.title.y=element_blank())
 ```
 
 ![Figure 3. Experimental apparatus with paired settling tiles 1 meter below the surface and on the cinderblock near the substrate. For plates inside the marina, the float was not used in favor of attaching the apparatus directly to the floating dock.](expapp.jpg)
 
-**Results**  
+**Results**
 
+Throughout this study, 53 total species were observed. When inside the marina was compared to outside of the marina, species richness was greater for plates inside the marina (Figure 4). Species diversity (Shannon index) was less clear due to the variability in the data, but it appeared the outside marina plates had slightly higher diversity, though the mean diversity for inside plates was higher than that of outside plates (Figure 5). In looking at trends across a distance gradient, some variability was evident. In general, species richness seemed to decrease from inside of the marina to the outside of the marina, but 200 meters from the marina had a higher species richness than did inside the marina (Figure 6). Species diversity had a much smoother trend, but in the opposite direction than expected. After an initial drop in diversity from inside the marina to 100 meters away, species diversity increased as distance from marina increased (Figure 7). When the species richness and species diversity along the distance gradient were broken down by invasion status, some interesting patterns emerge. In the marina (distance of 0 meters), there was a greater species richness for invasive species over native or unknown species (Figure 8). At all distances, invasive species richness was greater than native species richness, but only at 100 meters was invasive species richness greater than unknown species richness (Figure 8). Unknown species richness as 200 and 300 meters from the marina appeared to be similar to invasive species richness (Figure 8). Species diversity trends across distances were a little more consistent. Invasive and unknown species diversity appeared to be identical across all distances, increasing in diversity as distance increased after an initial drop from inside the marina to 100 meters outside of the marina (Figure 9). Native species diversity was similar to these trends, with the absence of any native species at 100 meters outside of the marina (Figure 9). 
 ```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
 uniqueplates <- unique(point$PlateNo)
 rich<-0
@@ -83,33 +85,63 @@ divdata<-inner_join(count2,platediv, by="PlateNo")
 divdata2<-inner_join(count3,platediv, by="PlateNo")
 
 ```
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Species richness by plate location (inside or outside the marina).", fig.height=6, fig.width=6}
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Species richness by plate location (inside or outside the marina). Median of inside marina plates: 11 +/- 0.858 species/plate. Median of outside marina plates: 9 +/- 1.721 species/plate. Mean of inside marina plates: 11.1 species/plate. Mean of outside marina plates: 9.2 species/plate.", fig.height=4, fig.width=4}
 p<-ggplot(divdata,aes(PlateLoc,count))
 p+geom_boxplot()+theme_bw()+labs(x="Plate Location", y="Species Richness/Plate")
 ```
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 5. Species diversity (Shannon index) by plate location (inside or outside the marina).", fig.height=6, fig.width=6}
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 5. Species diversity (Shannon index) by plate location (inside or outside the marina). Median of inside marina plates: 0.693. Median of outside marina plates: 0.829. Mean of inside marina plates: 0.671. Mean of outside marina plates: 0.641.", fig.height=4, fig.width=4}
 p2<-ggplot(divdata,aes(PlateLoc,Diversity))
 p2+geom_boxplot()+theme_bw()+labs(x="Plate Location", y="Shannon Diversity Index/Plate")
 ```
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 8. Species richness per plate across distances broken down by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
-p5<-ggplot(data=divdata,aes(x=Dist,y=count))+geom_boxplot(aes(group=Dist))
-p5+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(plot.title=element_text(size=10),axis.text.y=element_text(size=10),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=10),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 6. Species richness per plate along the distance gradient away from the marina.", fig.height=4, fig.width=4}
+p5<-ggplot(data=divdata,aes(x=Dist,y=count))
+p5+geom_boxplot(aes(group=Dist))+theme_bw()+labs(labs(y="Species Richness/Plate",x="Distance from Marina (m)"))
 ```
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 9. Species diversity (Shannon index) per plate across distances broken down by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
-p6<-ggplot(data=divdata,aes(x=Dist,y=Diversity))+geom_boxplot(aes(group=Dist))
-p6+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(plot.title=element_text(size=10), axis.text.y=element_text(size=10),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=10),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 7. Species diversity (Shannon index) per plate along the distance gradient away from the marina.", fig.height=4, fig.width=4}
+p6<-ggplot(data=divdata,aes(x=Dist,y=Diversity))
+p6+geom_boxplot(aes(group=Dist))+theme_bw()+labs(labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)"))
 ```
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 10. Species richness per plate across distances broken down by plate treatment (floating or fixed) and invasion status.", fig.height=6, fig.width=6}
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 8. Species richness per plate along the distance gradient away from the marina broken down by invasion status.", fig.height=4, fig.width=6}
 p7<-ggplot(data=divdata2,aes(x=Dist,y=count))+geom_boxplot(aes(group=Dist))
-p7+facet_grid(PlateTrt~Status,scales="free",as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+p7+facet_grid(.~Status,as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
 ```
 
-```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 11. Species diversity (Shannon index) per plate across distances broken down by plate treatment (floating or fixed) and invasion status.", fig.height=6, fig.width=6}
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 9. Species diversity (Shannon index) per plate along the distance gradient away from the marina broken down by invasion status.", fig.height=4, fig.width=6}
 p8<-ggplot(data=divdata2,aes(x=Dist,y=Diversity))+geom_boxplot(aes(group=Dist))
-p8+facet_grid(PlateTrt~Status,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+p8+facet_grid(.~Status,as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
 ```
 
+**Discussion**
+
+Artificial structures associated with marinas, such as floating docks, provide habitat for non-native species^8,16^. Some studies have explored the ability of non-native species to colonize natural habitat and the factors that prevent successful colonization^13,16^. This study explored the potential for non-native species within the fouling community to escape from marinas into natural habitat and the associated community changes that incur as distance from those artificial structures increased. Invasive species richness was greater than native species richness inside the marina, but species diversity was less clear between invasive and native species (Figures 8 and 9). The accuracy of species identification as well as invasion status identification could be skewing these results. Additionally, determining the status of unknown species could change the results in either direction, greater invasive richness and diversity or greater native richness and diversity. As distance from the marina increased, less of a clear pattern emerged. There were several factors influencing these results, the primary being that this was a pilot study and each distance point only had two plates, one near the benthos and one 1 meter below the surface. It is possible further patterns will emerge in analyzing top and bottom plates separately; however, for the purposes of this analysis, top and bottom plates for each distance were analyzed together to allow for a more comprehensive picture of the fouling community across distances. 
+
+Given that non-native fouling species are often found in greater numbers in locations with artificial structures such as marinas^16-20^, marinas could potentially be a hotspot or source population for invasion of surrounding natural habitat, though the processes that facilitate this escape are not well understood^14^.  Artificial structures can act as refuge for species from predators, allowing them to establish more thoroughly^21,22^, which lends itself to creating constant propagule pressure from within marinas. Propagule pressure is one of the more influential factors in structuring the fouling community, specifically associated with artificial structures^15^. This pilot study indicates that species richness and diversity are changing across distances and it will be important to further study this trend across multiple bays and multiple marinas, taking into account environmental variables, existing populations within the marina, and the hydrology of the bays studied. Further research stemming from this pilot study will be pertinent to managers in preventing spread of non-native, invasive species as well as potential placement of new artificial structures.
+
+**References**
+
+1.  Carlton, J. T. 1996. Pattern, process, and prediction in marine invasion ecology. *Biol. Conserv.* 78, 97–106.
+2.	Caley, P., Groves, R. H. & Barker, R. 2008. Estimating the invasion success of introduced plants. *Divers. Distrib.* 14, 196–203.
+3.	Crooks, J. A. 2005. Lag times and exotic species: The ecology and management of biological invasions in slow-motion. *Ecoscience* 12, 316–329.
+4.	Drake, J. A. 1991. Community-assembly mechanics and the structure of an experimental species ensemble. *Am. Nat.* 137, 1–26.
+5.	Occhipinti-Ambrogi, A. 2007. Global change and marine communities: Alien species and climate change. *Mar. Pollut. Bull.* 55, 342–352.
+6.	Aldred, N. & Clare, A. S. 2014. Mini-review: Impact and dynamics of surface fouling by solitary and compound ascidians. *Biofouling* 30, 259–270.
+7.	Glasby, T. M. 1999. Differences between subtidal epibiota on pier pilings and rocky reefs at marinas in Sydney, Australia. *Estuar. Coast. Shelf Sci.* 48, 281–290.
+8.	Connell, S. D. & Glasby, T. M. 1999. Do urban structures influence local abundance and diversity of subtidal epibiota? A case study from Sydney Harbour, Australia. *Mar. Environ. Res.* 47, 373–387.
+9.	Marzinelli, E. M. 2012. Artificial structures influence fouling on habitat-forming kelps. *Biofouling* 28, 339–349.
+10.	Wasson, K., Fenn, K. & Pearse, J. S. 2005. Habitat differences in marine invasions of central California. *Biol. Invasions* 7, 935–948.
+11.	Glasby, T. M., Connell, S. D., Holloway, M. G. & Hewitt, C. L. 2007. Nonindigenous biota on artificial structures: could habitat creation facilitate biological invasions? *Mar. Biol.* 151, 887–895.
+12.	Clark, G. F. & Johnston, E. L. 2009. Propagule pressure and disturbance interact to overcome biotic resistance of marine invertebrate communities. *Oikos* 118, 1679–1686.
+13.	Dumont, C. P., Gaymer, C. F. & Thiel, M. 2011. Predation contributes to invasion resistance of benthic communities against the non-indigenous tunicate *Ciona intestinalis*. *Biol. Invasions* 13, 2023–2034.
+14.	Simkanin, C., Davidson, I. C., Dower, J. F., Jamieson, G. & Therriault, T. W. 2012. Anthropogenic structures and the infiltration of natural benthos by invasive ascidians. *Mar. Ecol.* 33, 499–511.
+15.	Hedge, L. H. & Johnston, E. L. 2012. Propagule pressure determines recruitment from a commercial shipping pier. *Biofouling* 28, 73–85.
+16.	Rius, M., Pascual, M. & Turon, X. 2008. Phylogeography of the widespread marine invader *Microcosmus squamiger* (Ascidiacea) reveals high genetic diversity of introduced populations and non-independent colonizations. *Divers. Distrib.* 14, 818–828.
+17.	Darling, J. A., Kuenzi, A. & Reitzel, A. M. 2009. Human-mediated transport determines the non-native distribution of the anemone *Nematostella vectensis*, a dispersal-limited estuarine invertebrate. *Mar. Ecol. Prog. Ser.* 380, 137–146.
+18.	Bock, D. G., Zhan, A., Lejeusne, C., MacIsaac, H. J. & Cristescu, M. E. 2011. Looking at both sides of the invasion: Patterns of colonization in the violet tunicate *Botrylloides violaceus*. *Mol. Ecol.* 20, 503–516.
+19.	Holloway, M. G. & Connell, S. D. 2002. Why do floating structures create novel habitats for subtidal epibiota? *Mar. Ecol. Prog. Ser.* 235, 43–52.
+20.	Dafforn, K. A., Johnston, E. L. & Glasby, T. M. 2009. Shallow moving structures promote marine invader dominance. *Biofouling* 25, 277–287.
+21.	Connell, S. D. 2001. Urban structures as marine habitats: an experimental comparison of the composition and abundance of subtidal epibiota among pilings, pontoons and rocky reefs. *Mar. Environ. Res.* 52, 115–125.
+22.	Bulleri, F. & Chapman, M. G. 2010. The introduction of coastal infrastructure as a driver of change in marine environments. *J. Appl. Ecol*. 47, 26–35.

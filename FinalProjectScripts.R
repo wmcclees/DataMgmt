@@ -101,3 +101,49 @@ p7+facet_grid(PlateTrt~Status,scales="free",as.table=FALSE)+labs(y="Species Rich
 p8<-ggplot(data=divdata2,aes(x=Dist,y=Diversity))+geom_boxplot(aes(group=Dist))
 p8+facet_grid(PlateTrt~Status,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
 
+se<-function(divdata){
+  se<-sd(divdata$count)/sqrt(length(divdata$count))
+  return(se)
+}
+
+a<-subset(divdata, PlateLoc=="Inside Marina")
+mean(a$count)
+se(a)
+median(a$count)
+mean(a$Diversity)
+median(a$Diversity)
+
+b<-subset(divdata, PlateLoc=="Outside Marina")
+mean(b$count)
+se(b)
+median(b$count)
+mean(b$Diversity)
+median(b$Diversity)
+
+c<-subset(divdata, Dist==0)
+d<-subset(divdata, Dist==100)
+e<-subset(divdata, Dist==200)
+f<-subset(divdata, Dist==300)
+mean(c$count)
+se(c)
+median(c$count)
+mean(c$Diversity)
+median(c$Diversity)
+
+mean(d$count)
+se(d)
+median(d$count)
+mean(d$Diversity)
+median(d$Diversity)
+
+mean(e$count)
+se(e)
+median(e$count)
+mean(e$Diversity)
+median(e$Diversity)
+
+mean(f$count)
+se(f)
+median(f$count)
+mean(f$Diversity)
+median(f$Diversity)

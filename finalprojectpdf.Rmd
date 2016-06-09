@@ -1,0 +1,116 @@
+---
+title: "Exploring the Fouling Community Along a Distance Gradient from Artificial Structures"
+output: pdf_document
+fig_caption: yes
+---
+
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(maps)
+library(ggmap)
+dta<-read.csv("Plate diversity_final.csv")
+plateloc<-read.csv("Plate Locations.csv")
+status<-read.csv("Status.csv")
+point<-read.csv("PointCount.csv")
+names(dta)<-c("CollectDate","PlateNo","VialID","Box","Row","Column","Taxa","Species","Color","VialType","Fixative","Notes") #rename data frame columns
+names(plateloc)<-c("PlateNo","PlateLoc","PlateTrt","Depth","Lat","Long","Dist")
+fulldta<-inner_join(dta,plateloc,by="PlateNo")
+fulldta<-full_join(fulldta,status,by="Species")
+fulldta<-fulldta[,c(1,2,13:18,7:9,19,3:6,10:12)]
+count<-dcast(fulldta,PlateLoc+PlateTrt+PlateNo+Dist~PlateTrt,fun.aggregate=length)
+names(count)<-c("PlateLoc","PlateTrt","PlateNo","Dist","Fixed","Floating")
+count$count<-count$Fixed+count$Floating
+count2<-data.frame(count[,-5:-6])
+count3<-dcast(fulldta,PlateLoc+PlateTrt+PlateNo+Dist+Status~PlateTrt,fun.aggregate=length)
+names(count3)<-c("PlateLoc","PlateTrt","PlateNo","Dist","Status","Fixed","Floating")
+count3$count<-count3$Fixed+count3$Floating
+count3<-data.frame(count3[,-6:-7])
+```
+
+**Introduction**
+
+In coastal marine ecosystems, non-indigenous species have been introduced through anthropogenic activities, such as shipping and aquaculture^1^. However, introduced species may experience lag time between introduction and establishment and even between establishment and invasion^2^, such as the Collared Dove (*Streptopelia decaocto*) in Europe or Giant Reed (*Arundo donax*) in California^3^. The potential mechanisms behind these lag times, such as dispersal limitation (as with *Spartina alterniflora* in Willapa Bay, Washington^3^) and biotic resistance, can affect which species establish and disperse, thus affecting community assembly^4^. The overlapping interactions between the mechanisms that drive lag time and community assembly determine the composition of the fouling community in habitats. These interactions have the potential to change as climate change causes waters to warm.
+
+Aquatic communities become far more susceptible to introduced species if they are already stressed by other factors and if vectors like shipping cause high larval introduction^5^. For many non-native fouling organisms (aquatic species that attach to hard substrata), having available substrate upon arrival is crucial. Many non-native or recently introduced species are almost exclusively restricted to man-made or disturbed environments due in part, at least for some taxa, to the provided refuge from native predators and a lack of suitable unoccupied natural substrate^6^. Several studies have found that while a significant number of non-native species can be dominant on artificial structures in both diversity and biomass, few non-native species have established on nearby natural substrata^7-12^. Some studies have shown a greater predation risk to non-native species in benthic areas, potentially causing fewer non-native species to establish in natural areas^13,14^. Other work suggests that dispersal is limited and organisms may not be able to survive long enough to settle on substrate a great distance away from their source populations^15^. The mechanisms preventing or slowing the spread of non-native species to natural substrate from artificial structures are not resolved, especially for taxa beyond ascidians; therefore, this report examines how aquatic fouling community assemblage is affected by proximity to artificial structures in conjunction with the risk of non-native species spreading to natural substrata from artificial structures.
+
+**Materials and Methods**
+
+Community assemblages of sessile marine invertebrates were studied in August-October 2015 in Yaquina Bay in Newport, Oregon (Figure 1). This community was ideal for this experiment given the rapid community development and the high occurrence of both native and non-native species in marinas. Ceramic settling panels (SIZE: measure plate) were deployed throughout the Embarcadero Marina as well as along a gradient of distance beyond the marina (Figure 2). Ceramic settling panels as opposed to PVC settling panels were used to more closely mimic the nearby natural substrate. Additionally, using settling panels provides a standard area to be able to compare the community across distances. The Embarcadero Marina is located adjacent to the international shipping terminal, and the shoreline between the marina and the shipping terminal is reinforced with riprap. The panels were arranged so there was one panel floating horizontally one meter below the surface at all times and one panel attached to the cinderblock on the benthos (Figure 3). Apparatuses were deployed randomly throughout the marina, attached to floating docks. They were also deployed approximately every 100 meters beyond the opening of the marina (Figure 2). Environmental data was collected at deployment for both inside and outside the marina, including water temperature, salinity, clarity, and dissolved oxygen. The apparatuses were left in the water for 10 weeks to allow species to colonize the plates. When the plates were retrieved, environmental data was collected once again for both inside and outside the marina. Each plate was isolated in a container in the lab with water continuously flowing over them. For each plate, point counts were taken (a 7x7 grid with 1 random point to make up 50 points) and all species were identified and vouchered. Species diversity (Shannon index) and species richness were calculated for each plate. Data analysis was performed in RStudio Version 0.99.891.
+
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 1. Study site location in Yaquina Bay, Oregon.", fig.height=6, fig.width=6}
+platelocmap<-plateloc[,-2:-4]
+platelocmap<-platelocmap[,-4]
+newport_lat<- 44.629484
+newport_long<- -124.040865
+YB<-get_map("Newport, OR", maptype="satellite", zoom=12)
+ggmap(YB)+geom_point(aes(x=newport_long, y=newport_lat, fill="red", alpha=0.8), size=5, shape=21)+guides(fill=FALSE, alpha=FALSE, size=FALSE)+theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+```
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 2. Plate locations in and outside of the Embarcadero Marina in Yaquina Bay, Oregon.", fig.height=6, fig.width=6}
+mapnewport<- get_map(location=c(lon=newport_long, lat=newport_lat),zoom=16, maptype="satellite", scale=2)
+ggmap(mapnewport)+geom_point(data=plateloc, aes(x=Long, y=Lat, fill="red", alpha=0.8), size=5, shape=21)+guides(fill=FALSE, alpha=FALSE, size=FALSE)+theme(axis.title.x=element_blank(), axis.title.y=element_blank())
+```
+
+![Figure 3. Experimental apparatus with paired settling tiles 1 meter below the surface and on the cinderblock near the substrate. For plates inside the marina, the float was not used in favor of attaching the apparatus directly to the floating dock.](expapp.jpg)
+
+**Results**  
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE}
+uniqueplates <- unique(point$PlateNo)
+rich<-0
+div<-0
+Shannon<-function(point,plate){
+  platedat<-subset(point, PlateNo==plate)
+  platesum<-data.frame(table(platedat$Primary))
+  platesum<-subset(platesum, Freq > 0)
+  platesum<-subset(platesum, Var1 != "")
+  totalsp <- nrow(platesum)
+  totalcount <- sum(platesum$Freq)
+  platesum$relFreq <- platesum$Freq/totalcount
+  platesum$X <- platesum$relFreq*log(platesum$relFreq)
+  div<-sum(platesum$X)*-1
+  return(div)
+}
+
+for (i in 1:length(uniqueplates)){
+  div[i]<-Shannon(point, uniqueplates[i])
+}
+platediv<-data.frame(uniqueplates, div)
+names(platediv)<-c("PlateNo","Diversity")
+divdata<-inner_join(count2,platediv, by="PlateNo")
+divdata2<-inner_join(count3,platediv, by="PlateNo")
+
+```
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Species richness by plate location (inside or outside the marina).", fig.height=6, fig.width=6}
+p<-ggplot(divdata,aes(PlateLoc,count))
+p+geom_boxplot()+theme_bw()+labs(x="Plate Location", y="Species Richness/Plate")
+```
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 5. Species diversity (Shannon index) by plate location (inside or outside the marina).", fig.height=6, fig.width=6}
+p2<-ggplot(divdata,aes(PlateLoc,Diversity))
+p2+geom_boxplot()+theme_bw()+labs(x="Plate Location", y="Shannon Diversity Index/Plate")
+```
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 8. Species richness per plate across distances broken down by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
+p5<-ggplot(data=divdata,aes(x=Dist,y=count))+geom_boxplot(aes(group=Dist))
+p5+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(plot.title=element_text(size=10),axis.text.y=element_text(size=10),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=10),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+```
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 9. Species diversity (Shannon index) per plate across distances broken down by plate treatment (floating or fixed).", fig.height=6, fig.width=6}
+p6<-ggplot(data=divdata,aes(x=Dist,y=Diversity))+geom_boxplot(aes(group=Dist))
+p6+facet_grid(PlateTrt~Dist,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+ggtitle("Distance from Marina (m)")+theme_bw()+theme(plot.title=element_text(size=10), axis.text.y=element_text(size=10),axis.text.x=element_blank(),axis.ticks.x=element_blank(), axis.title.y=element_text(size=10),axis.title.x=element_blank())+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+```
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 10. Species richness per plate across distances broken down by plate treatment (floating or fixed) and invasion status.", fig.height=6, fig.width=6}
+p7<-ggplot(data=divdata2,aes(x=Dist,y=count))+geom_boxplot(aes(group=Dist))
+p7+facet_grid(PlateTrt~Status,scales="free",as.table=FALSE)+labs(y="Species Richness/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+```
+
+```{r,echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 11. Species diversity (Shannon index) per plate across distances broken down by plate treatment (floating or fixed) and invasion status.", fig.height=6, fig.width=6}
+p8<-ggplot(data=divdata2,aes(x=Dist,y=Diversity))+geom_boxplot(aes(group=Dist))
+p8+facet_grid(PlateTrt~Status,scales="free",as.table=FALSE)+labs(y="Shannon Diversity Index/Plate",x="Distance from Marina (m)")+theme_bw()+theme(axis.text=element_text(size=10),axis.title=element_text(size=10))+theme(strip.text.x=element_text(size=10),strip.text.y=element_text(size=10))
+```
+
